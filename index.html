@@ -27,7 +27,7 @@
         const gallery = document.getElementById('gallery');
 
         // 1. 获取 JSON 数据
-        fetch('data.json')
+        fetch('templates/data.json')
             .then(res => res.json())
             .then(data => {
                 photoData = data;
