@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>照片图鉴</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f4; }
+        .controls { margin-bottom: 20px; background: white; padding: 20px; border-radius: 8px; display: inline-block; }
+        select { padding: 10px; margin: 5px; border-radius: 4px; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        img { width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <h1>偶像照片图鉴</h1>
+    
+    <div class="controls">
+        <select id="yearSelect"><option value="">选择年份</option></select>
+        <select id="singleSelect"><option value="">选择单曲</option></select>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        let photoData = {};
+        const yearSelect = document.getElementById('yearSelect');
+        const singleSelect = document.getElementById('singleSelect');
+        const gallery = document.getElementById('gallery');
+
+        // 1. 获取 JSON 数据
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                photoData = data;
+                // 填充年份下拉框
+                Object.keys(data).forEach(year => {
+                    let opt = new Option(year, year);
+                    yearSelect.appendChild(opt);
+                });
+            });
+
+        // 2. 年份改变时更新单曲下拉框
+        yearSelect.onchange = function() {
+            singleSelect.innerHTML = '<option value="">选择单曲</option>';
+            gallery.innerHTML = '';
+            if (this.value) {
+                Object.keys(photoData[this.value]).forEach(single => {
+                    let opt = new Option(single, single);
+                    singleSelect.appendChild(opt);
+                });
+            }
+        };
+
+        // 3. 单曲改变时显示照片
+        singleSelect.onchange = function() {
+            gallery.innerHTML = '';
+            if (this.value) {
+                const photos = photoData[yearSelect.value][this.value];
+                photos.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    gallery.appendChild(img);
+                });
+            }
+        };
+    </script>
+</body>
+</html>
