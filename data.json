@@ -22,17 +22,16 @@
   },
   "2023": {
     "Life goes on / We are young": ["assets/2023_lifegoeson.jpeg"],
-    "两人体制始动：なにもの": ["assets/2023_nanimono.jpeg"],
+    "なにもの": ["assets/2023_nanimono.jpeg"],
     "爱し生きること": ["assets/2023_aishikiru.jpeg"]
   },
   "2024": {
     "halfmoon / moooove!!": ["assets/2024_moooove.jpeg"],
-    "Re:ERA 系列": ["assets/2024_reera.jpeg"]
+    "Re:ERA": ["assets/2024_reera.jpeg"]
   },
   "2025": {
-    "近期更新": [
-      "assets/IMG_4474.jpeg",
-      "assets/IMG_4475.jpeg"
-    ]
+    "Heart": ["assets/IMG_4474.jpeg"],
+    "I Know / What We Got~奇跡はきみと~": [ "assets/IMG_4475.jpeg"],
+    "Starring": [ "assets/IMG_4475.jpeg"]
   }
 }
