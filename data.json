@@ -1,28 +1,70 @@
 {
-  "gallery_title": "偶像照片图鉴",
-  "data": [
-    {
-      "year": "2023",
-      "singles": [
-        {
-          "single_name": "Life goes on / We are young",
-          "photos": [
-            { "title": "封面照", "url": "https://example.com/photo1.jpg" },
-            { "title": "打歌服", "url": "https://example.com/photo2.jpg" }
-          ]
-        }
-      ]
-    },
-    {
-      "year": "2024",
-      "singles": [
-        {
-          "single_name": "moooove!!",
-          "photos": [
-            { "title": "MV 造型", "url": "https://example.com/photo3.jpg" }
-          ]
-        }
-      ]
-    }
-  ]
+  "2018": {
+    "出道单曲：Cinderella Girl": [
+      "assets/2018_cinderella_01.jpeg"
+    ],
+    "Memorial": [
+      "assets/2018_memorial_01.jpeg"
+    ]
+  },
+  "2019": {
+    "君を待ってる": [
+      "assets/2019_kimiwo_01.jpeg"
+    ],
+    "koi-wazurai": [
+      "assets/2019_koi_01.jpeg"
+    ]
+  },
+  "2020": {
+    "Mazy Night": [
+      "assets/2020_mazy_01.jpeg"
+    ],
+    "I promise": [
+      "assets/2020_promise_01.jpeg"
+    ]
+  },
+  "2021": {
+    "Magic Touch / Beating Hearts": [
+      "assets/2021_magic_01.jpeg"
+    ],
+    "恋降る月夜に君想ふ": [
+      "assets/2021_koifuru_01.jpeg"
+    ]
+  },
+  "2022": {
+    "Lovin' you / 踊るように人生を。": [
+      "assets/2022_lovin_01.jpeg"
+    ],
+    "TraceTrace (永濑廉主演剧集主题曲)": [
+      "assets/2022_trace_01.jpeg"
+    ],
+    "ツキヨミ / 彩り": [
+      "assets/2022_tsuki_01.jpeg"
+    ]
+  },
+  "2023": {
+    "Life goes on / We are young": [
+      "assets/2023_life_01.jpeg"
+    ],
+    "两人体制始动：なにもの": [
+      "assets/2023_nanimono_01.jpeg"
+    ],
+    "爱し生きること": [
+      "assets/2023_aishi_01.jpeg"
+    ]
+  },
+  "2024": {
+    "halfmoon / moooove!!": [
+      "assets/2024_half_01.jpeg"
+    ],
+    "Re:ERA 系列": [
+      "assets/2024_reera_01.jpeg"
+    ]
+  },
+  "2025": {
+    "最新动态": [
+      "assets/IMG_4474.jpeg",
+      "assets/IMG_4475.jpeg"
+    ]
+  }
 }
