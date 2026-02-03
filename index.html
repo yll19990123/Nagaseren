@@ -2,52 +2,103 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Ren Nagase 照片图鉴</title>
+    <title>Ren Nagase 专属轨迹图鉴</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #fafafa; }
-        .controls { margin-bottom: 30px; background: white; padding: 20px; border-radius: 12px; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        select { padding: 10px; margin: 5px; border-radius: 6px; font-size: 16px; }
-        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-        .photo-card { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        img { width: 300px; height: auto; border-radius: 5px; }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #fdfdfd; color: #333; }
+        .controls { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        select, button { padding: 12px; margin: 5px; border-radius: 8px; border: 1px solid #eee; font-size: 15px; cursor: pointer; }
+        button { background: #000; color: white; border: none; }
+        button:hover { background: #333; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .photo-card { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; }
+        img { width: 280px; height: auto; border-radius: 8px; display: block; }
+        .check-container { margin-top: 10px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .owner-badge { background: #ffdee9; color: #b83b5e; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-bottom: 10px; display: inline-block; }
     </style>
 </head>
 <body>
-    <h1>永濑廉 (Ren Nagase) 照片图鉴</h1>
+    <h1>🖤 Ren Nagase 个人图鉴收藏</h1>
     
     <div class="controls">
         <select id="yearSelect"><option value="">加载中...</option></select>
         <select id="singleSelect"><option value="">选择分类</option></select>
+        <button onclick="showMyCollection()">查看我的收藏单</button>
+        <button onclick="location.reload()" style="background:#eee; color:#333;">显示全部</button>
     </div>
 
+    <div id="statusInfo" style="margin-bottom: 10px; font-weight: bold;"></div>
     <div class="gallery" id="gallery"></div>
 
     <script>
         let photoData = {};
+        // 从浏览器本地读取已经勾选的照片列表，如果没有就创建一个空数组
+        let myCollection = JSON.parse(localStorage.getItem('nagaseren_favs')) || [];
+
         const yearSelect = document.getElementById('yearSelect');
         const singleSelect = document.getElementById('singleSelect');
         const gallery = document.getElementById('gallery');
+        const statusInfo = document.getElementById('statusInfo');
 
-        fetch('data.json')
-            .then(res => {
-                if (!res.ok) throw new Error('找不到 data.json，请确认文件在仓库根目录');
-                return res.json();
-            })
+        fetch('data.json?t=' + new Date().getTime())
+            .then(res => res.json())
             .then(data => {
                 photoData = data;
                 yearSelect.innerHTML = '<option value="">选择年份</option>';
-                Object.keys(data).forEach(year => {
-                    yearSelect.appendChild(new Option(year, year));
+                Object.keys(data).sort((a, b) => b - a).forEach(year => {
+                    yearSelect.appendChild(new Option(year + "年", year));
                 });
-            })
-            .catch(err => {
-                yearSelect.innerHTML = '<option value="">加载失败</option>';
-                console.error(err);
             });
+
+        function renderGallery(photos, isCollectionMode = false) {
+            gallery.innerHTML = '';
+            if (photos.length === 0) {
+                gallery.innerHTML = '<p>这里还没有照片哦~</p>';
+                return;
+            }
+            photos.forEach(url => {
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                
+                // 如果是收藏模式，加个小勋章
+                if (myCollection.includes(url)) {
+                    card.innerHTML += '<span class="owner-badge">已入库</span>';
+                }
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.onerror = () => { img.src = 'https://via.placeholder.com/280?text=图片暂未上传'; };
+                
+                const checkDiv = document.createElement('div');
+                checkDiv.className = 'check-container';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = myCollection.includes(url);
+                
+                checkbox.onchange = function() {
+                    if (this.checked) {
+                        if (!myCollection.includes(url)) myCollection.push(url);
+                    } else {
+                        myCollection = myCollection.filter(item => item !== url);
+                    }
+                    // 将更新后的列表保存到浏览器
+                    localStorage.setItem('nagaseren_favs', JSON.stringify(myCollection));
+                    updateStatus();
+                };
+
+                const label = document.createElement('label');
+                label.innerText = '加入我的图鉴';
+                
+                checkDiv.appendChild(checkbox);
+                checkDiv.appendChild(label);
+                card.appendChild(img);
+                card.appendChild(checkDiv);
+                gallery.appendChild(card);
+            });
+        }
 
         yearSelect.onchange = function() {
             singleSelect.innerHTML = '<option value="">选择分类</option>';
-            gallery.innerHTML = '';
             if (this.value && photoData[this.value]) {
                 Object.keys(photoData[this.value]).forEach(single => {
                     singleSelect.appendChild(new Option(single, single));
@@ -56,19 +107,21 @@
         };
 
         singleSelect.onchange = function() {
-            gallery.innerHTML = '';
             if (this.value && yearSelect.value) {
-                const photos = photoData[yearSelect.value][this.value];
-                photos.forEach(url => {
-                    const card = document.createElement('div');
-                    card.className = 'photo-card';
-                    const img = document.createElement('img');
-                    img.src = url;
-                    card.appendChild(img);
-                    gallery.appendChild(card);
-                });
+                renderGallery(photoData[yearSelect.value][this.value]);
             }
         };
+
+        function showMyCollection() {
+            statusInfo.innerText = "正在展示你的专属个人图鉴（共 " + myCollection.length + " 张）";
+            renderGallery(myCollection, true);
+        }
+
+        function updateStatus() {
+            if (statusInfo.innerText.includes("专属个人图鉴")) {
+                showMyCollection();
+            }
+        }
     </script>
 </body>
 </html>
