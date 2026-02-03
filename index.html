@@ -28,7 +28,6 @@
         const singleSelect = document.getElementById('singleSelect');
         const gallery = document.getElementById('gallery');
 
-        // 关键点：这里必须指向你仓库里的那个 data.json
         fetch('data.json')
             .then(res => {
                 if (!res.ok) throw new Error('找不到 data.json，请确认文件在仓库根目录');
