@@ -1,15 +1,28 @@
 {
-  "2023": {
-    "Life goes on": [
-      "assets/ren_photo_01.jpg"
-    ],
-    "We are young": [
-      "assets/ren_photo_02.jpg"
-    ]
-  },
-  "2024": {
-    "moooove!!": [
-      "assets/ren_photo_03.jpg"
-    ]
-  }
+  "gallery_title": "偶像照片图鉴",
+  "data": [
+    {
+      "year": "2023",
+      "singles": [
+        {
+          "single_name": "Life goes on / We are young",
+          "photos": [
+            { "title": "封面照", "url": "https://example.com/photo1.jpg" },
+            { "title": "打歌服", "url": "https://example.com/photo2.jpg" }
+          ]
+        }
+      ]
+    },
+    {
+      "year": "2024",
+      "singles": [
+        {
+          "single_name": "moooove!!",
+          "photos": [
+            { "title": "MV 造型", "url": "https://example.com/photo3.jpg" }
+          ]
+        }
+      ]
+    }
+  ]
 }
