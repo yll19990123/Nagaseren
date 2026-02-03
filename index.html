@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>照片图鉴</title>
+    <meta charset="UTF-8">
+    <title>Ren Nagase 照片图鉴</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f4; }
-        .controls { margin-bottom: 20px; background: white; padding: 20px; border-radius: 8px; display: inline-block; }
-        select { padding: 10px; margin: 5px; border-radius: 4px; }
-        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-        img { width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #fafafa; }
+        .controls { margin-bottom: 30px; background: white; padding: 20px; border-radius: 12px; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        select { padding: 10px; margin: 5px; border-radius: 6px; font-size: 16px; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+        .photo-card { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        img { width: 300px; height: auto; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <h1>偶像照片图鉴</h1>
+    <h1>永濑廉 (Ren Nagase) 照片图鉴</h1>
     
     <div class="controls">
-        <select id="yearSelect"><option value="">选择年份</option></select>
-        <select id="singleSelect"><option value="">选择单曲</option></select>
+        <select id="yearSelect"><option value="">加载中...</option></select>
+        <select id="singleSelect"><option value="">选择分类</option></select>
     </div>
 
     <div class="gallery" id="gallery"></div>
@@ -26,39 +28,45 @@
         const singleSelect = document.getElementById('singleSelect');
         const gallery = document.getElementById('gallery');
 
-        // 1. 获取 JSON 数据
-       fetch('data.json')
-            .then(res => res.json())
+        // 关键点：这里必须指向你仓库里的那个 data.json
+        fetch('data.json')
+            .then(res => {
+                if (!res.ok) throw new Error('找不到 data.json，请确认文件在仓库根目录');
+                return res.json();
+            })
             .then(data => {
                 photoData = data;
-                // 填充年份下拉框
+                yearSelect.innerHTML = '<option value="">选择年份</option>';
                 Object.keys(data).forEach(year => {
-                    let opt = new Option(year, year);
-                    yearSelect.appendChild(opt);
+                    yearSelect.appendChild(new Option(year, year));
                 });
+            })
+            .catch(err => {
+                yearSelect.innerHTML = '<option value="">加载失败</option>';
+                console.error(err);
             });
 
-        // 2. 年份改变时更新单曲下拉框
         yearSelect.onchange = function() {
-            singleSelect.innerHTML = '<option value="">选择单曲</option>';
+            singleSelect.innerHTML = '<option value="">选择分类</option>';
             gallery.innerHTML = '';
-            if (this.value) {
+            if (this.value && photoData[this.value]) {
                 Object.keys(photoData[this.value]).forEach(single => {
-                    let opt = new Option(single, single);
-                    singleSelect.appendChild(opt);
+                    singleSelect.appendChild(new Option(single, single));
                 });
             }
         };
 
-        // 3. 单曲改变时显示照片
         singleSelect.onchange = function() {
             gallery.innerHTML = '';
-            if (this.value) {
+            if (this.value && yearSelect.value) {
                 const photos = photoData[yearSelect.value][this.value];
                 photos.forEach(url => {
+                    const card = document.createElement('div');
+                    card.className = 'photo-card';
                     const img = document.createElement('img');
                     img.src = url;
-                    gallery.appendChild(img);
+                    card.appendChild(img);
+                    gallery.appendChild(card);
                 });
             }
         };
