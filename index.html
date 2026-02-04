@@ -30,7 +30,31 @@
         .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
         .photo-card { background: #fff; padding: 12px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); width: 250px; transition: 0.3s; }
         
-        .archive-mode .photo-card.missing { opacity: 0.45; filter: grayscale(1); border: 1px dashed #adb5bd; }
+       /* --- 修改后的样式：取消灰色，改用边框和透明度区分 --- */
+
+        /* 1. 未收藏状态：彩色，但带虚线边框，且稍微有点透明 */
+        .archive-mode .photo-card.missing { 
+            opacity: 0.6;              /* 稍微半透明，但保留颜色 */
+            filter: grayscale(0);      /* 彻底关掉灰色效果 */
+            border: 2px dashed #adb5bd; /* 变成灰色虚线边框 */
+            box-shadow: none;          /* 去掉阴影，显得还没入库 */
+        }
+
+        /* 2. 已收藏状态：完全不透明，且带有坚实的黑色边框 */
+        .photo-card { 
+            opacity: 1; 
+            filter: grayscale(0); 
+            border: 2px solid #000;    /* 黑色实线，代表已制霸 */
+            transition: 0.3s; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 增加阴影感 */
+        }
+
+        /* 3. 愿望清单模式：在显示时也要确保是彩色的 */
+        .wishlist-mode .photo-card.missing { 
+            opacity: 1 !important; 
+            filter: grayscale(0) !important; 
+            border: 2.5px solid #b83b5e !important; 
+        }
         .photo-card { opacity: 1; filter: grayscale(0); }
 
         img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
