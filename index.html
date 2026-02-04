@@ -1,44 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>Ren Nagase 专属轨迹图鉴</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #fdfdfd; color: #333; }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #fafafa; color: #333; }
         .controls { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        select, button { padding: 12px; margin: 5px; border-radius: 8px; border: 1px solid #eee; font-size: 15px; cursor: pointer; }
-        button { background: #000; color: white; border: none; }
-        button:hover { background: #333; }
-        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
-        .photo-card { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; }
-        img { width: 280px; height: auto; border-radius: 8px; display: block; }
-        .check-container { margin-top: 10px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-        .owner-badge { background: #ffdee9; color: #b83b5e; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-bottom: 10px; display: inline-block; }
+        select, button { padding: 12px; margin: 5px; border-radius: 8px; border: 1px solid #ddd; font-size: 15px; cursor: pointer; }
+        button { background: #000; color: white; border: none; transition: 0.3s; }
+        button:hover { background: #444; }
+        
+        /* 导出按钮的特殊颜色 */
+        .export-btn { background: #b83b5e; } 
+
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; background: #fff; }
+        .photo-card { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; width: 260px; }
+        img { width: 100%; height: auto; border-radius: 8px; display: block; cursor: zoom-in; }
+
+        .check-area { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; border-top: 1px solid #eee; padding-top: 8px; }
+        .badge { position: absolute; top: 5px; right: 5px; background: #000; color: #fff; padding: 3px 8px; border-radius: 20px; font-size: 11px; display: none; z-index: 1; }
+        .owned .badge { display: block; }
+
+        /* 放大模态框 */
+        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); cursor: zoom-out; }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; transform: translateY(-50%); top: 50%; position: relative; }
+
+        /* 隐藏导出时的多选框 */
+        .exporting .check-area { display: none; }
+        .exporting .photo-card { box-shadow: none; border: 1px solid #eee; }
     </style>
 </head>
 <body>
-    <h1>🖤 Ren Nagase 个人图鉴收藏</h1>
+
+    <h1>🖤 Nagase Ren 个人图鉴收藏</h1>
     
     <div class="controls">
-        <select id="yearSelect"><option value="">加载中...</option></select>
+        <select id="yearSelect"><option value="">加载年份...</option></select>
         <select id="singleSelect"><option value="">选择分类</option></select>
-        <button onclick="showMyCollection()">查看我的收藏单</button>
+        <button onclick="filterMyCollection()">💎 查看我的收藏</button>
+        <button class="export-btn" onclick="exportToImage()">📸 保存图鉴到相册</button>
         <button onclick="location.reload()" style="background:#eee; color:#333;">显示全部</button>
     </div>
 
-    <div id="statusInfo" style="margin-bottom: 10px; font-weight: bold;"></div>
+    <div id="statusText" style="margin-bottom: 10px; font-weight: bold; color: #666;"></div>
+    
     <div class="gallery" id="gallery"></div>
+
+    <div id="myModal" class="modal" onclick="this.style.display='none'">
+        <img class="modal-content" id="imgFull">
+    </div>
 
     <script>
         let photoData = {};
-        // 从浏览器本地读取已经勾选的照片列表，如果没有就创建一个空数组
-        let myCollection = JSON.parse(localStorage.getItem('nagaseren_favs')) || [];
+        let myFavs = JSON.parse(localStorage.getItem('ren_nagase_collection')) || [];
 
         const yearSelect = document.getElementById('yearSelect');
         const singleSelect = document.getElementById('singleSelect');
         const gallery = document.getElementById('gallery');
-        const statusInfo = document.getElementById('statusInfo');
+        const statusText = document.getElementById('statusText');
 
         fetch('data.json?t=' + new Date().getTime())
             .then(res => res.json())
@@ -50,78 +70,52 @@
                 });
             });
 
-        function renderGallery(photos, isCollectionMode = false) {
+        function displayPhotos(photoUrls) {
             gallery.innerHTML = '';
-            if (photos.length === 0) {
-                gallery.innerHTML = '<p>这里还没有照片哦~</p>';
-                return;
-            }
-            photos.forEach(url => {
+            photoUrls.forEach(url => {
+                const isSaved = myFavs.includes(url);
                 const card = document.createElement('div');
-                card.className = 'photo-card';
-                
-                // 如果是收藏模式，加个小勋章
-                if (myCollection.includes(url)) {
-                    card.innerHTML += '<span class="owner-badge">已入库</span>';
-                }
-
-                const img = document.createElement('img');
-                img.src = url;
-                img.onerror = () => { img.src = 'https://via.placeholder.com/280?text=图片暂未上传'; };
-                
-                const checkDiv = document.createElement('div');
-                checkDiv.className = 'check-container';
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = myCollection.includes(url);
-                
-                checkbox.onchange = function() {
-                    if (this.checked) {
-                        if (!myCollection.includes(url)) myCollection.push(url);
-                    } else {
-                        myCollection = myCollection.filter(item => item !== url);
-                    }
-                    // 将更新后的列表保存到浏览器
-                    localStorage.setItem('nagaseren_favs', JSON.stringify(myCollection));
-                    updateStatus();
-                };
-
-                const label = document.createElement('label');
-                label.innerText = '加入我的图鉴';
-                
-                checkDiv.appendChild(checkbox);
-                checkDiv.appendChild(label);
-                card.appendChild(img);
-                card.appendChild(checkDiv);
+                card.className = 'photo-card' + (isSaved ? ' owned' : '');
+                card.innerHTML = `
+                    <div class="badge">已收藏</div>
+                    <img src="${url}" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/260?text=暂无图片'">
+                    <div class="check-area">
+                        <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this)">
+                        <label>加入图鉴</label>
+                    </div>
+                `;
                 gallery.appendChild(card);
             });
         }
 
+        window.openModal = function(url) {
+            document.getElementById('myModal').style.display = "block";
+            document.getElementById('imgFull').src = url;
+        }
+
+        window.toggleSave = function(url, checkbox) {
+            if (checkbox.checked) {
+                if (!myFavs.includes(url)) myFavs.push(url);
+                checkbox.closest('.photo-card').classList.add('owned');
+            } else {
+                myFavs = myFavs.filter(item => item !== url);
+                checkbox.closest('.photo-card').classList.remove('owned');
+            }
+            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+        };
+
         yearSelect.onchange = function() {
             singleSelect.innerHTML = '<option value="">选择分类</option>';
-            if (this.value && photoData[this.value]) {
-                Object.keys(photoData[this.value]).forEach(single => {
-                    singleSelect.appendChild(new Option(single, single));
-                });
+            if (this.value) {
+                Object.keys(photoData[this.value]).forEach(s => singleSelect.appendChild(new Option(s, s)));
             }
         };
 
         singleSelect.onchange = function() {
-            if (this.value && yearSelect.value) {
-                renderGallery(photoData[yearSelect.value][this.value]);
-            }
+            displayPhotos(photoData[yearSelect.value][this.value]);
         };
 
-        function showMyCollection() {
-            statusInfo.innerText = "正在展示你的专属个人图鉴（共 " + myCollection.length + " 张）";
-            renderGallery(myCollection, true);
-        }
-
-        function updateStatus() {
-            if (statusInfo.innerText.includes("专属个人图鉴")) {
-                showMyCollection();
-            }
-        }
-    </script>
-</body>
-</html>
+        window.filterMyCollection = function() {
+            statusText.innerText = "✨ 正在展示你的专属个人图鉴";
+            displayPhotos(myFavs);
+        };
