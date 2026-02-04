@@ -113,7 +113,7 @@
                 } else if (mode === 'wishlist') {
                     // 愿望清单模式：不显示复选框，显示“🛒 想要”字样和备注
                     footerContent = `
-                        <div style="color: #b83b5e; font-weight: bold; margin-bottom: 8px;">🛒 想要入手</div>
+                        <div style="color: #b83b5e; font-weight: bold; margin-bottom: 8px;">🛒 想要</div>
                         <input type="text" class="note-input" placeholder="备注：如价格、渠道" value="${note}" onchange="saveNote('${url}', this.value)">
                         <div style="margin-top: 10px;"><button onclick="quickCollect('${url}')" style="padding: 5px 10px; font-size: 11px; background: #000;">标记为已入库</button></div>`;
                 } else if (mode === 'collected') {
