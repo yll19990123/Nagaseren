@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Ren Nagase 搜集手册 v3.5</title>
+    <title>Ren Nagase 搜集手册 v4.0</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
@@ -12,26 +12,25 @@
         button { background: #000; color: #fff; border: none; font-weight: bold; }
         button:hover { background: #333; transform: translateY(-2px); }
         
-        /* 进度面板 */
         #progressContainer { margin: 20px auto; max-width: 850px; display: none; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .progress-bar-bg { background: #e9ecef; border-radius: 10px; height: 14px; width: 100%; overflow: hidden; margin: 12px 0; }
         #progressBar { background: linear-gradient(90deg, #212529, #495057); height: 100%; width: 0%; transition: width 0.6s ease; }
         #progressStat { font-weight: bold; color: #212529; font-size: 15px; }
 
-        /* 照片卡片 */
         .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
-        .photo-card { background: #fff; padding: 12px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); width: 250px; position: relative; transition: 0.3s; }
+        .photo-card { background: #fff; padding: 12px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); width: 250px; transition: 0.3s; }
         
-        /* 默认待解锁状态（仅在主题分类页显示） */
-        .photo-card.missing { opacity: 0.45; filter: grayscale(1); border: 1px dashed #adb5bd; }
-        .photo-card.missing::after { content: "未持有"; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; z-index: 2; pointer-events: none; }
-
-        /* 愿望清单模式：强制亮起彩色 */
-        .wishlist-mode .photo-card.missing { opacity: 1 !important; filter: grayscale(0) !important; border: 2px solid #b83b5e !important; }
-        .wishlist-mode .photo-card.missing::after { content: "🛒 想要" !important; background: #b83b5e !important; }
+        /* 仅在分类浏览模式下的未持有状态：灰度 */
+        .archive-mode .photo-card.missing { opacity: 0.45; filter: grayscale(1); border: 1px dashed #adb5bd; }
 
         img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
-        .check-area { margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; font-size: 13px; }
+        
+        .card-footer { margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px; }
+        .check-area { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
+        
+        /* 备注输入框 */
+        .note-input { width: 90%; padding: 5px; border: 1px solid #eee; border-radius: 5px; font-size: 12px; outline: none; transition: 0.3s; }
+        .note-input:focus { border-color: #b83b5e; background: #fff9f9; }
 
         .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; position: relative; top: 50%; transform: translateY(-50%); border: 2px solid #fff; }
@@ -42,11 +41,11 @@
     <h1 style="font-weight: 900; letter-spacing: 1px;">🖤 NAGASE REN <span id="modeTitle">ARCHIVE</span></h1>
 
     <div class="controls">
-        <select id="yearSelect"><option value="">📅 选择年份</option></select>
-        <select id="singleSelect"><option value="">💿 选择主题</option></select>
-        <button onclick="showCollected()" style="background:#000;">💖 已入库</button>
+        <select id="yearSelect"><option value="">📅 年代...</option></select>
+        <select id="singleSelect"><option value="">💿 分类...</option></select>
+        <button onclick="showCollected()" style="background:#000;">💖 已拥有</button>
         <button onclick="showWishlist()" style="background:#b83b5e;">🛒 愿望清单</button>
-        <button onclick="exportToImage()">📸 导出清单</button>
+        <button onclick="exportToImage()">📸 导出当前</button>
         <button onclick="location.reload()" style="background:#6c757d;">🔄 重置</button>
     </div>
 
@@ -67,6 +66,7 @@
     <script>
         let photoData = {};
         let myFavs = JSON.parse(localStorage.getItem('ren_nagase_collection')) || [];
+        let myNotes = JSON.parse(localStorage.getItem('ren_nagase_notes')) || {}; // 存储备注
         
         const yearSelect = document.getElementById('yearSelect');
         const singleSelect = document.getElementById('singleSelect');
@@ -85,60 +85,63 @@
                 });
         };
 
-        // --- 核心渲染逻辑 ---
-        function render(urls, mode = 'normal') {
+        function render(urls, mode = 'archive') {
             gallery.innerHTML = '';
-            gallery.className = 'gallery'; // 重置
+            gallery.className = 'gallery ' + (mode === 'archive' ? 'archive-mode' : '');
             
-            if (mode === 'wishlist') gallery.classList.add('wishlist-mode');
-
             if (!urls || urls.length === 0) {
-                gallery.innerHTML = `<p>${mode === 'wishlist' ? '太棒了！你的愿望清单已经全空了（全部收集完了）！' : '这里空空如也~'}</p>`;
+                gallery.innerHTML = `<p>这里空空如也~</p>`;
                 return;
             }
 
             urls.forEach(url => {
                 const isSaved = myFavs.includes(url);
-                // 如果是“已入库”模式，只显示已收藏的
+                // 过滤逻辑
                 if (mode === 'collected' && !isSaved) return;
-                // 如果是“愿望清单”模式，只显示未收藏的
                 if (mode === 'wishlist' && isSaved) return;
 
                 const card = document.createElement('div');
                 card.className = `photo-card ${isSaved ? '' : 'missing'}`;
+                
+                // 获取备注内容
+                const note = myNotes[url] || "";
+
                 card.innerHTML = `
-                    <img src="${url}" loading="lazy" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/250x330?text=未上传'">
-                    <div class="check-area">
-                        <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> ${isSaved ? '已收藏' : '要入库'}
+                    <img src="${url}" loading="lazy" onclick="openModal('${url}')">
+                    <div class="card-footer">
+                        <div class="check-area">
+                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> ${isSaved ? '已收藏' : '要入库'}
+                        </div>
+                        <input type="text" class="note-input" placeholder="添加备注 (如: 价格/渠道)" 
+                               value="${note}" onchange="saveNote('${url}', this.value)">
                     </div>`;
                 gallery.appendChild(card);
             });
         }
 
-        // --- 按钮功能 ---
+        // 核心：保存备注
+        function saveNote(url, text) {
+            myNotes[url] = text;
+            localStorage.setItem('ren_nagase_notes', JSON.stringify(myNotes));
+        }
 
-        // 1. 显示已入库（仅显示打过钩的，彩色）
         function showCollected() {
-            yearSelect.value = ""; singleSelect.innerHTML = '<option value="">已拥有全集</option>';
+            yearSelect.value = ""; singleSelect.innerHTML = '<option value="">已入库清单</option>';
             progressContainer.style.display = 'none';
             document.getElementById('modeTitle').innerText = "COLLECTED";
             render(myFavs, 'collected');
         }
 
-        // 2. 显示愿望清单（仅显示没打钩的，彩色亮起）
         function showWishlist() {
-            yearSelect.value = ""; singleSelect.innerHTML = '<option value="">愿望清单全集</option>';
+            yearSelect.value = ""; singleSelect.innerHTML = '<option value="">愿望清单</option>';
             progressContainer.style.display = 'none';
             document.getElementById('modeTitle').innerText = "WISHLIST";
-
             let allUrls = [];
             Object.values(photoData).forEach(y => Object.values(y).forEach(u => allUrls = allUrls.concat(u)));
             const wishlist = allUrls.filter(u => !myFavs.includes(u));
-            
-            render(wishlist, 'wishlist');
+            render(wishlist, 'wishlist'); // 愿望模式下不使用灰度
         }
 
-        // 3. 正常按分类查看（已有彩色，未有灰色）
         singleSelect.onchange = function() {
             if (this.value && yearSelect.value) {
                 progressContainer.style.display = 'block';
@@ -146,48 +149,45 @@
                 document.getElementById('currentCategoryTitle').innerText = `${yearSelect.value} • ${this.value}`;
                 const urls = photoData[yearSelect.value][this.value];
                 updateProgress(urls);
-                render(urls, 'normal');
+                render(urls, 'archive'); // 分类模式下开启灰度对比
                 checkSelectAllStatus(urls);
             }
         };
 
-        // --- 辅助逻辑 ---
-
         function toggleSave(url, cb, mode) {
-            if (cb.checked) {
-                if (!myFavs.includes(url)) myFavs.push(url);
-            } else {
-                myFavs = myFavs.filter(i => i !== url);
-            }
+            if (cb.checked) { if (!myFavs.includes(url)) myFavs.push(url); }
+            else { myFavs = myFavs.filter(i => i !== url); }
             localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
             
-            // 保存后根据当前模式刷新页面
             if (mode === 'collected') showCollected();
             else if (mode === 'wishlist') showWishlist();
             else {
                 const urls = photoData[yearSelect.value][singleSelect.value];
                 updateProgress(urls);
                 refreshSingleDropdown(yearSelect.value);
+                // 实时更新卡片灰度
+                cb.closest('.photo-card').className = `photo-card ${cb.checked ? '' : 'missing'}`;
             }
         }
 
+        // 其余辅助逻辑 (进度条、全选、弹窗等) 保持不变...
         function updateProgress(urls) {
             const total = urls.length;
             const collectedCount = urls.filter(url => myFavs.includes(url)).length;
             const percent = total > 0 ? (collectedCount / total) * 100 : 0;
             document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressStat').innerText = `收集率：${collectedCount} / ${total} (${Math.round(percent)}%)`;
-            if (percent === 100 && total > 0) confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('progressStat').innerText = `本组进度：${collectedCount} / ${total} (${Math.round(percent)}%)`;
+            if (percent === 100 && total > 0) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
         }
 
         yearSelect.onchange = function() {
-            singleSelect.innerHTML = '<option value="">💿 选择主题</option>';
+            singleSelect.innerHTML = '<option value="">💿 选择分类</option>';
             if (this.value) refreshSingleDropdown(this.value);
         };
 
         function refreshSingleDropdown(year) {
             const current = singleSelect.value;
-            singleSelect.innerHTML = '<option value="">💿 选择主题</option>';
+            singleSelect.innerHTML = '<option value="">💿 选择分类</option>';
             Object.keys(photoData[year]).forEach(s => {
                 const mine = photoData[year][s].filter(url => myFavs.includes(url)).length;
                 const total = photoData[year][s].length;
@@ -197,13 +197,10 @@
 
         function toggleSelectAll(trigger) {
             const urls = photoData[yearSelect.value][singleSelect.value];
-            if (trigger.checked) {
-                urls.forEach(url => { if (!myFavs.includes(url)) myFavs.push(url); });
-            } else {
-                myFavs = myFavs.filter(url => !urls.includes(url));
-            }
+            if (trigger.checked) { urls.forEach(url => { if (!myFavs.includes(url)) myFavs.push(url); }); }
+            else { myFavs = myFavs.filter(url => !urls.includes(url)); }
             localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
-            render(urls, 'normal');
+            render(urls, 'archive');
         }
 
         function checkSelectAllStatus(urls) {
@@ -213,11 +210,14 @@
         function openModal(url) { document.getElementById('myModal').style.display = "block"; document.getElementById('imgFull').src = url; }
         
         function exportToImage() {
+            const btn = document.querySelector('button[onclick="exportToImage()"]');
+            btn.innerText = "生成中...";
             html2canvas(gallery, { useCORS: true, backgroundColor: "#f8f9fa", scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `Ren_Nagase_List.png`;
+                link.download = `Ren_Archive_${Date.now()}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
+                btn.innerText = "📸 导出当前";
             });
         }
     </script>
