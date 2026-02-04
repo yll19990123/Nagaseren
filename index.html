@@ -6,6 +6,16 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        /* 导出模式下，隐藏所有按钮、复选框和输入框的边框 */
+  .exporting button, 
+  .exporting .check-area,
+  .exporting input[type="checkbox"] { 
+    display: none !important; 
+}
+.exporting .note-input { 
+    border: none !important; 
+    background: transparent !important; 
+}
         body { font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; padding: 20px; background: #f8f9fa; color: #333; }
         .controls { margin-bottom: 25px; background: #fff; padding: 20px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         select, button { padding: 12px 18px; margin: 6px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; cursor: pointer; transition: 0.3s; }
@@ -253,43 +263,42 @@
 
         function openModal(url) { document.getElementById('myModal').style.display = "block"; document.getElementById('imgFull').src = url; }
         
-        function exportToImage() {
-            const btn = document.querySelector('button[onclick="exportToImage()"]');
-            const originalText = btn.innerText;
-            btn.innerText = "正在生成高清图 (请稍候)...";
-            btn.disabled = true;
+function exportToImage() {
+    const btn = document.querySelector('button[onclick="exportToImage()"]');
+    const originalText = btn.innerText;
+    btn.innerText = "📸 正在生成高清图...";
+    btn.disabled = true;
 
-            // 核心修复：强制让所有图片加载完成后再执行导出
-            const images = gallery.getElementsByTagName('img');
-            const promises = Array.from(images).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => {
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                });
-            });
+    // 1. 进入导出模式：给 gallery 加上类名，隐藏按钮
+    gallery.classList.add('exporting');
 
-            Promise.all(promises).then(() => {
-                // 使用更高的 scale (3.0) 确保备注文字也清晰
-                html2canvas(gallery, {
-                    useCORS: true,           // 允许跨域图片渲染
-                    backgroundColor: "#f8f9fa",
-                    scale: 3,               // 提高清晰度
-                    logging: false,          // 关闭调试日志
-                    windowWidth: gallery.scrollWidth,
-                    windowHeight: gallery.scrollHeight
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    const fileName = document.getElementById('modeTitle').innerText;
-                    link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.png`;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                    
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                });
-            });
-        }
+    // 2. 强制等待图片加载
+    const images = gallery.getElementsByTagName('img');
+    const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+    });
+
+    Promise.all(promises).then(() => {
+        html2canvas(gallery, {
+            useCORS: true,
+            backgroundColor: "#f8f9fa",
+            scale: 3, 
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            const fileName = document.getElementById('modeTitle').innerText;
+            link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            
+            // 3. 恢复模式：移除类名，显示按钮
+            gallery.classList.remove('exporting');
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    });
+}
     </script>
 </body>
 </html>
