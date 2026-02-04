@@ -137,6 +137,13 @@
       "assets/2025_wwg_ (25).jpg",
       "assets/2025_wwg_ (26).jpg"
     ],
+    "Mickey & Friends × King ＆ Prince": ["assets/2025_Mickey_ (1).jpg",
+      "assets/2025_Mickey_ (2).jpg",
+      "assets/2025_Mickey_ (3).jpg",
+      "assets/2025_Mickey_ (4).jpg",
+      "assets/2025_Mickey_ (5).jpg",
+      "assets/2025_Mickey_ (6).jpg"
+    ],
     "Starring": [ "assets/2025_starring_ (1).jpg",
       "assets/2025_starring_ (2).jpg",
       "assets/2025_starring_ (3).jpg",
@@ -170,5 +177,24 @@
       "assets/2025_starring_ (31).jpg",
       "assets/2025_starring_ (32).jpg"
       ]
+  },
+   "2026": {
+    "DOME TOUR 2026 STARRING": ["assets/2026_DOME TOUR 2026 STARRING_ (1).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (2).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (3).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (4).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (5).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (6).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (7).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (8).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (9).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (10).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (11).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (12).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (13).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (14).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (15).jpg",
+      "assets/2026_DOME TOUR 2026 STARRING_ (16).jpg"
+    ]
   }
 }
