@@ -2,12 +2,12 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>Ren Nagase 搜集手册 v4.0</title>
+    <title>Ren Nagase 搜集手册 v4.2</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; padding: 20px; background: #f8f9fa; color: #333; }
-        .controls { margin-bottom: 25px; background: #fff; padding: 25px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .controls { margin-bottom: 25px; background: #fff; padding: 20px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         select, button { padding: 12px 18px; margin: 6px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; cursor: pointer; transition: 0.3s; }
         button { background: #000; color: #fff; border: none; font-weight: bold; }
         button:hover { background: #333; transform: translateY(-2px); }
@@ -20,19 +20,13 @@
         .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
         .photo-card { background: #fff; padding: 12px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); width: 250px; transition: 0.3s; }
         
-        /* 仅在分类浏览模式下的未持有状态：灰度 */
         .archive-mode .photo-card.missing { opacity: 0.45; filter: grayscale(1); border: 1px dashed #adb5bd; }
-        /* 当 missing 类被移除时，自动回复彩色 */
         .photo-card { opacity: 1; filter: grayscale(0); }
-        
-        img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
 
+        img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
         .card-footer { margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px; }
         .check-area { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
-        
-        /* 备注输入框 */
-        .note-input { width: 90%; padding: 5px; border: 1px solid #eee; border-radius: 5px; font-size: 12px; outline: none; transition: 0.3s; }
-        .note-input:focus { border-color: #b83b5e; background: #fff9f9; }
+        .note-input { width: 90%; padding: 6px; border: 1px solid #eee; border-radius: 5px; font-size: 12px; outline: none; }
 
         .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
         .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; position: relative; top: 50%; transform: translateY(-50%); border: 2px solid #fff; }
@@ -68,7 +62,7 @@
     <script>
         let photoData = {};
         let myFavs = JSON.parse(localStorage.getItem('ren_nagase_collection')) || [];
-        let myNotes = JSON.parse(localStorage.getItem('ren_nagase_notes')) || {}; // 存储备注
+        let myNotes = JSON.parse(localStorage.getItem('ren_nagase_notes')) || {};
         
         const yearSelect = document.getElementById('yearSelect');
         const singleSelect = document.getElementById('singleSelect');
@@ -98,30 +92,68 @@
 
             urls.forEach(url => {
                 const isSaved = myFavs.includes(url);
-                // 过滤逻辑
                 if (mode === 'collected' && !isSaved) return;
                 if (mode === 'wishlist' && isSaved) return;
 
                 const card = document.createElement('div');
                 card.className = `photo-card ${isSaved ? '' : 'missing'}`;
-                
-                // 获取备注内容
                 const note = myNotes[url] || "";
 
                 card.innerHTML = `
                     <img src="${url}" loading="lazy" onclick="openModal('${url}')">
                     <div class="card-footer">
                         <div class="check-area">
-                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> ${isSaved ? '已收藏' : '想要'}
+                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> 已收藏
                         </div>
-                        <input type="text" class="note-input" placeholder="添加备注 (如: 价格/渠道)" 
+                        <input type="text" class="note-input" placeholder="添加备注..." 
                                value="${note}" onchange="saveNote('${url}', this.value)">
                     </div>`;
                 gallery.appendChild(card);
             });
         }
 
-        // 核心：保存备注
+        function toggleSave(url, cb, mode) {
+            const card = cb.closest('.photo-card');
+            if (cb.checked) {
+                if (!myFavs.includes(url)) myFavs.push(url);
+                card.classList.remove('missing');
+            } else {
+                myFavs = myFavs.filter(i => i !== url);
+                if (mode === 'archive') card.classList.add('missing');
+            }
+            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+            
+            if (mode === 'collected' || mode === 'wishlist') {
+                setTimeout(() => renderByCurrentMode(mode), 300);
+            } else {
+                const currentUrls = photoData[yearSelect.value][singleSelect.value];
+                updateProgress(currentUrls);
+                refreshSingleDropdown(yearSelect.value);
+                checkSelectAllStatus(currentUrls);
+            }
+        }
+
+        // --- 核心修复：全选即刻同步进度条 ---
+        function toggleSelectAll(trigger) {
+            const year = yearSelect.value;
+            const single = singleSelect.value;
+            if (!year || !single) return;
+            const currentUrls = photoData[year][single];
+
+            if (trigger.checked) {
+                currentUrls.forEach(url => { if (!myFavs.includes(url)) myFavs.push(url); });
+            } else {
+                myFavs = myFavs.filter(url => !currentUrls.includes(url));
+            }
+            
+            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+            
+            // 立即刷新 UI
+            render(currentUrls, 'archive');
+            updateProgress(currentUrls);
+            refreshSingleDropdown(year);
+        }
+
         function saveNote(url, text) {
             myNotes[url] = text;
             localStorage.setItem('ren_nagase_notes', JSON.stringify(myNotes));
@@ -141,7 +173,7 @@
             let allUrls = [];
             Object.values(photoData).forEach(y => Object.values(y).forEach(u => allUrls = allUrls.concat(u)));
             const wishlist = allUrls.filter(u => !myFavs.includes(u));
-            render(wishlist, 'wishlist'); // 愿望模式下不使用灰度
+            render(wishlist, 'wishlist');
         }
 
         singleSelect.onchange = function() {
@@ -151,35 +183,23 @@
                 document.getElementById('currentCategoryTitle').innerText = `${yearSelect.value} • ${this.value}`;
                 const urls = photoData[yearSelect.value][this.value];
                 updateProgress(urls);
-                render(urls, 'archive'); // 分类模式下开启灰度对比
+                render(urls, 'archive');
                 checkSelectAllStatus(urls);
             }
         };
 
-        function toggleSave(url, cb, mode) {
-            if (cb.checked) { if (!myFavs.includes(url)) myFavs.push(url); }
-            else { myFavs = myFavs.filter(i => i !== url); }
-            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
-            
-            if (mode === 'collected') showCollected();
-            else if (mode === 'wishlist') showWishlist();
-            else {
-                const urls = photoData[yearSelect.value][singleSelect.value];
-                updateProgress(urls);
-                refreshSingleDropdown(yearSelect.value);
-                // 实时更新卡片灰度
-                cb.closest('.photo-card').className = `photo-card ${cb.checked ? '' : 'missing'}`;
-            }
-        }
-
-        // 其余辅助逻辑 (进度条、全选、弹窗等) 保持不变...
         function updateProgress(urls) {
             const total = urls.length;
             const collectedCount = urls.filter(url => myFavs.includes(url)).length;
             const percent = total > 0 ? (collectedCount / total) * 100 : 0;
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressStat').innerText = `本组进度：${collectedCount} / ${total} (${Math.round(percent)}%)`;
-            if (percent === 100 && total > 0) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+            
+            const pBar = document.getElementById('progressBar');
+            const pStat = document.getElementById('progressStat');
+            
+            if(pBar) pBar.style.width = percent + '%';
+            if(pStat) pStat.innerText = `本组进度：${collectedCount} / ${total} (${Math.round(percent)}%)`;
+            
+            if (percent === 100 && total > 0) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
         yearSelect.onchange = function() {
@@ -195,31 +215,23 @@
                 const total = photoData[year][s].length;
                 singleSelect.appendChild(new Option(`${s} (${mine}/${total})`, s));
             });
-        }
-
-        function toggleSelectAll(trigger) {
-            const urls = photoData[yearSelect.value][singleSelect.value];
-            if (trigger.checked) { urls.forEach(url => { if (!myFavs.includes(url)) myFavs.push(url); }); }
-            else { myFavs = myFavs.filter(url => !urls.includes(url)); }
-            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
-            render(urls, 'archive');
+            singleSelect.value = current;
         }
 
         function checkSelectAllStatus(urls) {
-            document.getElementById('selectAllTrigger').checked = urls.every(url => myFavs.includes(url)) && urls.length > 0;
+            const trigger = document.getElementById('selectAllTrigger');
+            if (trigger) trigger.checked = urls.every(url => myFavs.includes(url)) && urls.length > 0;
         }
 
         function openModal(url) { document.getElementById('myModal').style.display = "block"; document.getElementById('imgFull').src = url; }
         
         function exportToImage() {
-            const btn = document.querySelector('button[onclick="exportToImage()"]');
-            btn.innerText = "生成中...";
-            html2canvas(gallery, { useCORS: true, backgroundColor: "#f8f9fa", scale: 2 }).then(canvas => {
+            const node = document.getElementById('gallery');
+            html2canvas(node, { useCORS: true, backgroundColor: "#f8f9fa", scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Ren_Archive_${Date.now()}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
-                btn.innerText = "📸 导出当前";
             });
         }
     </script>
