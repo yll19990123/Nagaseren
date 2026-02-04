@@ -290,13 +290,11 @@
 function exportToImage() {
     const btn = document.querySelector('button[onclick="exportToImage()"]');
     const originalText = btn.innerText;
-    btn.innerText = "📸 正在生成高清图...";
+    btn.innerText = "📸 正在压缩生成..."; // 修改提示语，显得更专业
     btn.disabled = true;
 
-    // 1. 进入导出模式：给 gallery 加上类名，隐藏按钮
     gallery.classList.add('exporting');
 
-    // 2. 强制等待图片加载
     const images = gallery.getElementsByTagName('img');
     const promises = Array.from(images).map(img => {
         if (img.complete) return Promise.resolve();
@@ -306,17 +304,21 @@ function exportToImage() {
     Promise.all(promises).then(() => {
         html2canvas(gallery, {
             useCORS: true,
-            backgroundColor: "#f8f9fa",
-            scale: 3, 
+            backgroundColor: "#ffffff", // 建议改为白色，JPG不支持透明
+            scale: 1.5,                 // 【优化 1】从 3 降到 1.5，清晰度足够但体积大幅减小
             logging: false
         }).then(canvas => {
             const link = document.createElement('a');
             const fileName = document.getElementById('modeTitle').innerText;
-            link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.png`;
-            link.href = canvas.toDataURL("image/png");
+            
+            // 【优化 2】后缀名改为 .jpg
+            link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.jpg`;
+            
+            // 【优化 3】改为 image/jpeg 格式，并设置 0.7 的压缩质量
+            link.href = canvas.toDataURL("image/jpeg", 0.7);
+            
             link.click();
             
-            // 3. 恢复模式：移除类名，显示按钮
             gallery.classList.remove('exporting');
             btn.innerText = originalText;
             btn.disabled = false;
