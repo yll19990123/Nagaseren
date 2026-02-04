@@ -81,17 +81,19 @@
                 });
         };
 
-        function render(urls, mode = 'archive') {
+       function render(urls, mode = 'archive') {
             gallery.innerHTML = '';
+            // 只有在分类浏览模式下才开启灰度样式
             gallery.className = 'gallery ' + (mode === 'archive' ? 'archive-mode' : '');
             
             if (!urls || urls.length === 0) {
-                gallery.innerHTML = `<p>这里空空如也~</p>`;
+                gallery.innerHTML = `<p>${mode === 'wishlist' ? '太棒了！愿望清单已清空！' : '这里空空如也~'}</p>`;
                 return;
             }
 
             urls.forEach(url => {
                 const isSaved = myFavs.includes(url);
+                // 模式过滤
                 if (mode === 'collected' && !isSaved) return;
                 if (mode === 'wishlist' && isSaved) return;
 
@@ -99,17 +101,43 @@
                 card.className = `photo-card ${isSaved ? '' : 'missing'}`;
                 const note = myNotes[url] || "";
 
+                // 根据模式决定底部显示内容
+                let footerContent = '';
+                if (mode === 'archive') {
+                    // 分类浏览模式：显示复选框和备注
+                    footerContent = `
+                        <div class="check-area">
+                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> 已收藏
+                        </div>
+                        <input type="text" class="note-input" placeholder="添加备注..." value="${note}" onchange="saveNote('${url}', this.value)">`;
+                } else if (mode === 'wishlist') {
+                    // 愿望清单模式：不显示复选框，显示“🛒 想要”字样和备注
+                    footerContent = `
+                        <div style="color: #b83b5e; font-weight: bold; margin-bottom: 8px;">🛒 想要入手</div>
+                        <input type="text" class="note-input" placeholder="备注：如价格、渠道" value="${note}" onchange="saveNote('${url}', this.value)">
+                        <div style="margin-top: 10px;"><button onclick="quickCollect('${url}')" style="padding: 5px 10px; font-size: 11px; background: #000;">标记为已入库</button></div>`;
+                } else if (mode === 'collected') {
+                    // 已拥有模式：不显示复选框，仅显示备注，保持极致纯净
+                    footerContent = `
+                        <div style="color: #212529; font-weight: bold; margin-bottom: 8px;">💖 已入库</div>
+                        <input type="text" class="note-input" placeholder="备注..." value="${note}" onchange="saveNote('${url}', this.value)">`;
+                }
+
                 card.innerHTML = `
                     <img src="${url}" loading="lazy" onclick="openModal('${url}')">
-                    <div class="card-footer">
-                        <div class="check-area">
-                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> 想要
-                        </div>
-                        <input type="text" class="note-input" placeholder="添加备注..." 
-                               value="${note}" onchange="saveNote('${url}', this.value)">
-                    </div>`;
+                    <div class="card-footer">${footerContent}</div>`;
                 gallery.appendChild(card);
             });
+        }
+
+        // 愿望清单模式下的快速入库功能
+        function quickCollect(url) {
+            if (!myFavs.includes(url)) {
+                myFavs.push(url);
+                localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+                showWishlist(); // 刷新愿望清单，该图会自动消失
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+            }
         }
 
         function toggleSave(url, cb, mode) {
