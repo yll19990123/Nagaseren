@@ -27,9 +27,13 @@
         <button onclick="exportToImage()" style="background:#b83b5e;">📸 保存图鉴</button>
         <button onclick="location.reload()" style="background:#6c757d; color:#fff;">显示全部</button>
     </div>
-    <div id="statusText" style="margin-bottom: 10px; font-weight: bold; color: red;"></div>
-    <div class="gallery" id="gallery"></div>
-    <div id="myModal" class="modal" onclick="this.style.display='none'"><img class="modal-content" id="imgFull"></div>
+  <div id="progressContainer" style="margin: 20px auto; max-width: 800px; display: none;">
+    <h2 id="currentCategoryTitle" style="margin-bottom: 5px;"></h2>
+    <div style="background: #eee; border-radius: 10px; height: 20px; width: 100%; position: relative; overflow: hidden;">
+        <div id="progressBar" style="background: #b83b5e; height: 100%; width: 0%; transition: width 0.3s;"></div>
+    </div>
+    <p id="progressStat" style="margin-top: 5px; font-weight: bold;"></p>
+</div>
 
     <script>
         let photoData = {};
@@ -73,15 +77,65 @@
 
       function render(urls) {
             gallery.innerHTML = '';
+            const container = document.getElementById('progressContainer');
+            
             if (!urls || urls.length === 0) {
+                container.style.display = 'none';
                 gallery.innerHTML = '<p>暂无照片</p>';
                 return;
             }
 
+            // 显示进度信息
+            container.style.display = 'block';
+            const selectedYear = yearSelect.value;
+            const selectedSingle = singleSelect.value;
+            document.getElementById('currentCategoryTitle').innerText = 
+                selectedYear ? `${selectedYear}年 ➔ ${selectedSingle}` : "我的收藏全集";
+
+            // 计算进度
+            const total = urls.length;
+            const collectedCount = urls.filter(url => myFavs.includes(url)).length;
+            const percent = (collectedCount / total) * 100;
+
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressStat').innerText = `已收集 ${collectedCount} / ${total}`;
+
+            // 渲染图片卡片
             urls.forEach(url => {
                 const isSaved = myFavs.includes(url);
                 const card = document.createElement('div');
                 card.className = 'photo-card';
+                card.innerHTML = `
+                    <img src="${url}" loading="lazy" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/260?text=图片路径有误'">
+                    <div class="check-area">
+                        <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this)"> 确认收集
+                    </div>`;
+                gallery.appendChild(card);
+            });
+        }
+
+        // 并在 toggleSave 函数里最后加上重新渲染进度的逻辑
+        function toggleSave(url, cb) {
+            if (cb.checked) {
+                if (!myFavs.includes(url)) myFavs.push(url);
+            } else {
+                myFavs = myFavs.filter(i => i !== url);
+            }
+            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+            
+            // 实时刷新进度条
+            const currentUrls = (yearSelect.value && singleSelect.value) ? 
+                               photoData[yearSelect.value][singleSelect.value] : myFavs;
+            updateProgressOnly(currentUrls);
+        }
+
+        function updateProgressOnly(urls) {
+            const total = urls.length;
+            const collectedCount = urls.filter(url => myFavs.includes(url)).length;
+            const percent = total > 0 ? (collectedCount / total) * 100 : 0;
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressStat').innerText = `已收集 ${collectedCount} / ${total}`;
+        }
                 
                 // 核心修改：加上 loading="lazy"，这就是懒加载！
                 card.innerHTML = `
