@@ -110,7 +110,7 @@
                     <img src="${url}" loading="lazy" onclick="openModal('${url}')">
                     <div class="card-footer">
                         <div class="check-area">
-                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> ${isSaved ? '已收藏' : '要入库'}
+                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> ${isSaved ? '已收藏' : '想要'}
                         </div>
                         <input type="text" class="note-input" placeholder="添加备注 (如: 价格/渠道)" 
                                value="${note}" onchange="saveNote('${url}', this.value)">
