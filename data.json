@@ -1,7 +1,15 @@
 {
   "2018": {
-    "Cinderella Girl (出道单曲)": ["assets/2018_cinderella.jpeg"],
-    "Memorial": ["assets/2018_memorial.jpeg"]
+    "Cinderella Girl": [
+      "assets/2018_cinderella_01.jpeg",
+      "assets/2018_cinderella_02.jpeg",
+      "assets/2018_cinderella_03.jpeg"
+    ],
+    "Memorial": [
+      "assets/2018_memorial_01.jpeg",
+      "assets/2018_memorial_02.jpeg"
+    ]
+  },
   },
   "2019": {
     "君を待ってる": ["assets/2019_kimiwo.jpeg"],
