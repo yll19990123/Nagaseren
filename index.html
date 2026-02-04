@@ -8,136 +8,99 @@
         body { font-family: sans-serif; text-align: center; padding: 20px; background: #fafafa; color: #333; }
         .controls { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         select, button { padding: 12px; margin: 5px; border-radius: 8px; border: 1px solid #ddd; font-size: 15px; cursor: pointer; }
-        button { background: #000; color: white; border: none; transition: 0.3s; }
-        button:hover { background: #444; }
-        
-        /* 导出按钮的特殊颜色 */
-        .export-btn { background: #b83b5e; } 
-
-        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; background: #fff; }
-        .photo-card { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); position: relative; width: 260px; }
-        img { width: 100%; height: auto; border-radius: 8px; display: block; cursor: zoom-in; }
-
-        .check-area { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; border-top: 1px solid #eee; padding-top: 8px; }
-        .badge { position: absolute; top: 5px; right: 5px; background: #000; color: #fff; padding: 3px 8px; border-radius: 20px; font-size: 11px; display: none; z-index: 1; }
-        .owned .badge { display: block; }
-
+        button { background: #000; color: white; border: none; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .photo-card { background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); width: 260px; position: relative; }
+        img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
+        .check-area { margin-top: 10px; font-size: 14px; border-top: 1px solid #eee; padding-top: 8px; }
         /* 放大模态框 */
-        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); cursor: zoom-out; }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; transform: translateY(-50%); top: 50%; position: relative; }
-
-        /* 隐藏导出时的多选框 */
-        .exporting .check-area { display: none; }
-        .exporting .photo-card { box-shadow: none; border: 1px solid #eee; }
+        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; position: relative; top: 50%; transform: translateY(-50%); }
     </style>
 </head>
 <body>
-
-    <h1>🖤 Nagase Ren 个人图鉴收藏</h1>
-    
+    <h1>🖤 Ren Nagase 个人图鉴收藏</h1>
     <div class="controls">
-        <select id="yearSelect"><option value="">选择年份...</option></select>
+        <select id="yearSelect"><option value="">加载中...</option></select>
         <select id="singleSelect"><option value="">选择分类</option></select>
-        <button onclick="filterMyCollection()">💎 查看我的收藏</button>
-        <button class="export-btn" onclick="exportToImage()">📸 保存图鉴到相册</button>
-        <button onclick="location.reload()" style="background:#eee; color:#333;">显示全部</button>
+        <button onclick="filterMyCollection()">💎 查看收藏</button>
+        <button onclick="exportToImage()" style="background:#b83b5e;">📸 保存图鉴</button>
     </div>
-
-    <div id="statusText" style="margin-bottom: 10px; font-weight: bold; color: #666;"></div>
-    
+    <div id="statusText" style="margin-bottom: 10px; font-weight: bold; color: red;"></div>
     <div class="gallery" id="gallery"></div>
-
-    <div id="myModal" class="modal" onclick="this.style.display='none'">
-        <img class="modal-content" id="imgFull">
-    </div>
+    <div id="myModal" class="modal" onclick="this.style.display='none'"><img class="modal-content" id="imgFull"></div>
 
     <script>
         let photoData = {};
         let myFavs = JSON.parse(localStorage.getItem('ren_nagase_collection')) || [];
-
         const yearSelect = document.getElementById('yearSelect');
         const singleSelect = document.getElementById('singleSelect');
         const gallery = document.getElementById('gallery');
         const statusText = document.getElementById('statusText');
 
-        // 强制跳过缓存抓取最新数据
-        fetch('data.json?update=' + new Date().getTime())
+        // 核心：强制刷新并读取
+        fetch('data.json?t=' + Date.now())
             .then(res => {
-                if (!res.ok) {
-                    throw new Error('找不到 data.json，请检查文件是否存在。');
-                }
+                if (!res.ok) throw new Error('找不到 data.json，请检查文件名！');
                 return res.json();
             })
             .then(data => {
                 photoData = data;
-                yearSelect.innerHTML = '<option value="">选择年份</option>';
-                // 自动提取 JSON 里的年份并排序
-                const years = Object.keys(data).sort((a, b) => b - a);
-                years.forEach(year => {
-                    yearSelect.appendChild(new Option(year + "年", year));
-                });
-                statusText.innerText = "✅ 数据加载成功！";
-            })
-            .catch(err => {
-                console.error(err);
-                statusText.innerText = "❌ 数据读取失败：" + err.message;
-                yearSelect.innerHTML = '<option value="">加载失败</option>';
-            });
-            .then(res => res.json())
-            .then(data => {
-                photoData = data;
+                statusText.style.color = "green";
+                statusText.innerText = "✅ 年份加载成功";
                 yearSelect.innerHTML = '<option value="">选择年份</option>';
                 Object.keys(data).sort((a, b) => b - a).forEach(year => {
                     yearSelect.appendChild(new Option(year + "年", year));
                 });
+            })
+            .catch(err => {
+                statusText.innerText = "❌ 错误：" + err.message;
+                console.error(err);
             });
-
-        function displayPhotos(photoUrls) {
-            gallery.innerHTML = '';
-            photoUrls.forEach(url => {
-                const isSaved = myFavs.includes(url);
-                const card = document.createElement('div');
-                card.className = 'photo-card' + (isSaved ? ' owned' : '');
-                card.innerHTML = `
-                    <div class="badge">已收藏</div>
-                    <img src="${url}" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/260?text=暂无图片'">
-                    <div class="check-area">
-                        <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this)">
-                        <label>加入图鉴</label>
-                    </div>
-                `;
-                gallery.appendChild(card);
-            });
-        }
-
-        window.openModal = function(url) {
-            document.getElementById('myModal').style.display = "block";
-            document.getElementById('imgFull').src = url;
-        }
-
-        window.toggleSave = function(url, checkbox) {
-            if (checkbox.checked) {
-                if (!myFavs.includes(url)) myFavs.push(url);
-                checkbox.closest('.photo-card').classList.add('owned');
-            } else {
-                myFavs = myFavs.filter(item => item !== url);
-                checkbox.closest('.photo-card').classList.remove('owned');
-            }
-            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
-        };
 
         yearSelect.onchange = function() {
             singleSelect.innerHTML = '<option value="">选择分类</option>';
-            if (this.value) {
+            if (this.value && photoData[this.value]) {
                 Object.keys(photoData[this.value]).forEach(s => singleSelect.appendChild(new Option(s, s)));
             }
         };
 
         singleSelect.onchange = function() {
-            displayPhotos(photoData[yearSelect.value][this.value]);
+            if (this.value && yearSelect.value) {
+                render(photoData[yearSelect.value][this.value]);
+            }
         };
 
-        window.filterMyCollection = function() {
-            statusText.innerText = "✨ 正在展示你的专属个人图鉴";
-            displayPhotos(myFavs);
-        };
+        function render(urls) {
+            gallery.innerHTML = '';
+            urls.forEach(url => {
+                const isSaved = myFavs.includes(url);
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.innerHTML = `
+                    <img src="${url}" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/260?text=图片路径有误'">
+                    <div class="check-area">
+                        <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this)"> 加入图鉴
+                    </div>`;
+                gallery.appendChild(card);
+            });
+        }
+
+        function openModal(url) { document.getElementById('myModal').style.display = "block"; document.getElementById('imgFull').src = url; }
+        function toggleSave(url, cb) {
+            if (cb.checked) { if (!myFavs.includes(url)) myFavs.push(url); }
+            else { myFavs = myFavs.filter(i => i !== url); }
+            localStorage.setItem('ren_nagase_collection', JSON.stringify(myFavs));
+        }
+        function filterMyCollection() { statusText.innerText = "✨ 我的图鉴"; render(myFavs); }
+        function exportToImage() {
+            html2canvas(gallery, { useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'My_Ren_Nagase.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
