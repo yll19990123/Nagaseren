@@ -369,10 +369,53 @@
 ]
   },
   "2023": {
-    
-    "Life goes on / We are young": ["assets/2023_lifegoeson.jpeg"],
-    "なにもの": ["assets/2023_nanimono.jpeg"],
-    "爱し生きること": ["assets/2023_aishikiru.jpeg"]
+    "Life goes on / We are young":[
+  "assets/2023_lifegoeson_ (1).jpg",
+  "assets/2023_lifegoeson_ (2).jpg",
+  "assets/2023_lifegoeson_ (3).jpg",
+  "assets/2023_lifegoeson_ (4).jpg",
+  "assets/2023_lifegoeson_ (5).jpg",
+  "assets/2023_lifegoeson_ (6).jpg",
+  "assets/2023_lifegoeson_ (7).jpg",
+  "assets/2023_lifegoeson_ (8).jpg",
+  "assets/2023_lifegoeson_ (9).jpg",
+  "assets/2023_lifegoeson_ (10).jpg",
+  "assets/2023_lifegoeson_ (11).jpg",
+  "assets/2023_lifegoeson_ (12).jpg",
+  "assets/2023_lifegoeson_ (13).jpg",
+  "assets/2023_lifegoeson_ (14).jpg",
+  "assets/2023_lifegoeson_ (15).jpg",
+  "assets/2023_lifegoeson_ (16).jpg"
+],
+    "アルバム「Mr.5」": [
+  "assets/2023_Mr5_ (1).jpg",
+  "assets/2023_Mr5_ (2).jpg",
+  "assets/2023_Mr5_ (3).jpg",
+  "assets/2023_Mr5_ (4).jpg",
+  "assets/2023_Mr5_ (5).jpg",
+  "assets/2023_Mr5_ (6).jpg",
+  "assets/2023_Mr5_ (7).jpg",
+  "assets/2023_Mr5_ (8).jpg",
+  "assets/2023_Mr5_ (9).jpg",
+  "assets/2023_Mr5_ (10).jpg",
+  "assets/2023_Mr5_ (11).jpg",
+  "assets/2023_Mr5_ (12).jpg",
+  "assets/2023_Mr5_ (13).jpg",
+  "assets/2023_Mr5_ (14).jpg",
+  "assets/2023_Mr5_ (15).jpg",
+  "assets/2023_Mr5_ (16).jpg",
+  "assets/2023_Mr5_ (17).jpg",
+  "assets/2023_Mr5_ (18).jpg",
+  "assets/2023_Mr5_ (19).jpg",
+  "assets/2023_Mr5_ (20).jpg",
+  "assets/2023_Mr5_ (21).jpg",
+  "assets/2023_Mr5_ (22).jpg",
+  "assets/2023_Mr5_ (23).jpg",
+  "assets/2023_Mr5_ (24).jpg",
+  "assets/2023_Mr5_ (25).jpg"
+],
+    "なにもの": ["assets/2023_nanimono.jpg"],
+    "爱し生きること": ["assets/2023_aishikiru.jpg"]
   },
   "2024": {
     "halfmoon / moooove!!": ["assets/2024_moooove.jpeg"],
