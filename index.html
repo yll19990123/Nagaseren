@@ -103,7 +103,7 @@
                     <img src="${url}" loading="lazy" onclick="openModal('${url}')">
                     <div class="card-footer">
                         <div class="check-area">
-                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> 已收藏
+                            <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this, '${mode}')"> 想要
                         </div>
                         <input type="text" class="note-input" placeholder="添加备注..." 
                                value="${note}" onchange="saveNote('${url}', this.value)">
@@ -226,12 +226,40 @@
         function openModal(url) { document.getElementById('myModal').style.display = "block"; document.getElementById('imgFull').src = url; }
         
         function exportToImage() {
-            const node = document.getElementById('gallery');
-            html2canvas(node, { useCORS: true, backgroundColor: "#f8f9fa", scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Ren_Archive_${Date.now()}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
+            const btn = document.querySelector('button[onclick="exportToImage()"]');
+            const originalText = btn.innerText;
+            btn.innerText = "正在生成高清图 (请稍候)...";
+            btn.disabled = true;
+
+            // 核心修复：强制让所有图片加载完成后再执行导出
+            const images = gallery.getElementsByTagName('img');
+            const promises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            });
+
+            Promise.all(promises).then(() => {
+                // 使用更高的 scale (3.0) 确保备注文字也清晰
+                html2canvas(gallery, {
+                    useCORS: true,           // 允许跨域图片渲染
+                    backgroundColor: "#f8f9fa",
+                    scale: 3,               // 提高清晰度
+                    logging: false,          // 关闭调试日志
+                    windowWidth: gallery.scrollWidth,
+                    windowHeight: gallery.scrollHeight
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    const fileName = document.getElementById('modeTitle').innerText;
+                    link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                    
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
             });
         }
     </script>
