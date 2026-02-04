@@ -20,11 +20,12 @@
 </head>
 <body>
     <h1>🖤 Ren Nagase 个人图鉴收藏</h1>
-    <div class="controls">
+   <div class="controls">
         <select id="yearSelect"><option value="">加载中...</option></select>
         <select id="singleSelect"><option value="">选择分类</option></select>
         <button onclick="filterMyCollection()">💎 查看收藏</button>
         <button onclick="exportToImage()" style="background:#b83b5e;">📸 保存图鉴</button>
+        <button onclick="location.reload()" style="background:#6c757d; color:#fff;">显示全部</button>
     </div>
     <div id="statusText" style="margin-bottom: 10px; font-weight: bold; color: red;"></div>
     <div class="gallery" id="gallery"></div>
