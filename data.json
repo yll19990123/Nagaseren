@@ -52,7 +52,23 @@
     "Re:ERA": ["assets/2024_reera.jpeg"]
   },
   "2025": {
-    "Heart": ["assets/IMG_4474.jpeg"],
+    "Heart": [ "assets/2025_heart_01.jpg",
+      "assets/2025_heart_02.jpg",
+      "assets/2025_heart_03.jpg",
+      "assets/2025_heart_04.jpg",
+      "assets/2025_heart_05.jpg",
+      "assets/2025_heart_06.jpg",
+      "assets/2025_heart_07.jpg",
+      "assets/2025_heart_08.jpg",
+      "assets/2025_heart_09.jpg",
+      "assets/2025_heart_10.jpg",
+      "assets/2025_heart_11.jpg",
+      "assets/2025_heart_12.jpg",
+      "assets/2025_heart_13.jpg",
+      "assets/2025_heart_14.jpg",
+      "assets/2025_heart_15.jpg",
+      "assets/2025_heart_16.jpg"
+ ],
     "I Know / What We Got~奇跡はきみと~": [ "assets/IMG_4475.jpeg"],
     "Starring": [ "assets/IMG_4475.jpeg"]
   }
