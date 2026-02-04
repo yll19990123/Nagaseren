@@ -56,15 +56,79 @@
   "assets/2018_memorial_ (14).jpg",
   "assets/2018_memorial_ (15).jpg"
 ],
-    "JOHNNYS’ King&Prince IsLAND": [
+    "JOHNNYS’ King&Prince ISLAND": [
        "assets/2018_ISLAND_ (1).jpg",
       "assets/2018_ISLAND_ (2).jpg",
       "assets/2018_ISLAND_ (3).jpg"
     ]
   },
   "2019": {
-    "君を待ってる": ["assets/2019_kimiwo.jpeg"],
-    "koi-wazurai": ["assets/2019_koiwazurai.jpeg"]
+    "君を待ってる": [
+  "assets/2019_君を待ってる_ (1).jpg",
+  "assets/2019_君を待ってる_ (2).jpg",
+  "assets/2019_君を待ってる_ (3).jpg",
+  "assets/2019_君を待ってる_ (4).jpg",
+  "assets/2019_君を待ってる_ (5).jpg",
+  "assets/2019_君を待ってる_ (6).jpg",
+  "assets/2019_君を待ってる_ (7).jpg",
+  "assets/2019_君を待ってる_ (8).jpg",
+  "assets/2019_君を待ってる_ (9).jpg",
+  "assets/2019_君を待ってる_ (10).jpg"
+],
+    "アルバム「King&Prince」": [
+  "assets/2019_アルバム「King&Prince」_ (1).jpg",
+  "assets/2019_アルバム「King&Prince」_ (2).jpg",
+  "assets/2019_アルバム「King&Prince」_ (3).jpg",
+  "assets/2019_アルバム「King&Prince」_ (4).jpg",
+  "assets/2019_アルバム「King&Prince」_ (5).jpg",
+  "assets/2019_アルバム「King&Prince」_ (6).jpg",
+  "assets/2019_アルバム「King&Prince」_ (7).jpg",
+  "assets/2019_アルバム「King&Prince」_ (8).jpg",
+  "assets/2019_アルバム「King&Prince」_ (9).jpg",
+  "assets/2019_アルバム「King&Prince」_ (10).jpg",
+  "assets/2019_アルバム「King&Prince」_ (11).jpg",
+  "assets/2019_アルバム「King&Prince」_ (12).jpg",
+  "assets/2019_アルバム「King&Prince」_ (13).jpg",
+  "assets/2019_アルバム「King&Prince」_ (14).jpg",
+  "assets/2019_アルバム「King&Prince」_ (15).jpg",
+  "assets/2019_アルバム「King&Prince」_ (16).jpg",
+  "assets/2019_アルバム「King&Prince」_ (17).jpg",
+  "assets/2019_アルバム「King&Prince」_ (18).jpg"
+],
+    "19夏コンサート": [
+  "assets/2019_19con_ (1).jpg",
+  "assets/2019_19con_ (2).jpg",
+  "assets/2019_19con_ (3).jpg",
+  "assets/2019_19con_ (4).jpg",
+  "assets/2019_19con_ (5).jpg",
+  "assets/2019_19con_ (6).jpg",
+  "assets/2019_19con_ (7).jpg",
+  "assets/2019_19con_ (8).jpg"
+],
+    "koi-wazurai": [
+  "assets/2019_koiwazurai_ (1).jpg",
+  "assets/2019_koiwazurai_ (2).jpg",
+  "assets/2019_koiwazurai_ (3).jpg",
+  "assets/2019_koiwazurai_ (4).jpg",
+  "assets/2019_koiwazurai_ (5).jpg",
+  "assets/2019_koiwazurai_ (6).jpg",
+  "assets/2019_koiwazurai_ (7).jpg",
+  "assets/2019_koiwazurai_ (8).jpg",
+  "assets/2019_koiwazurai_ (9).jpg",
+  "assets/2019_koiwazurai_ (10).jpg",
+  "assets/2019_koiwazurai_ (11).jpg",
+  "assets/2019_koiwazurai_ (12).jpg"
+],
+    "JOHNNYS's ISLAND": [
+  "assets/2019_ISLAND_ (1).jpg",
+  "assets/2019_ISLAND_ (2).jpg",
+  "assets/2019_ISLAND_ (3).jpg",
+  "assets/2019_ISLAND_ (4).jpg",
+  "assets/2019_ISLAND_ (5).jpg",
+  "assets/2019_ISLAND_ (6).jpg",
+  "assets/2019_ISLAND_ (7).jpg"
+]
+    
   },
   "2020": {
     "Mazy Night": ["assets/2020_mazy.jpeg"],
