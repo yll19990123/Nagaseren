@@ -27,7 +27,7 @@
   "assets/2018_シンデレラガール_ (14).jpg",
   "assets/2018_シンデレラガール_ (15).jpg"
     ],
-     "18夏コンサート": [
+     "2018 コンサート": [
   "assets/2018_18con_ (1).jpg",
   "assets/2018_18con_ (2).jpg",
   "assets/2018_18con_ (3).jpg",
@@ -95,7 +95,7 @@
   "assets/2019_アルバム「King&Prince」_ (17).jpg",
   "assets/2019_アルバム「King&Prince」_ (18).jpg"
 ],
-    "19夏コンサート": [
+    "2019 コンサート": [
   "assets/2019_19con_ (1).jpg",
   "assets/2019_19con_ (2).jpg",
   "assets/2019_19con_ (3).jpg",
@@ -127,12 +127,65 @@
   "assets/2019_ISLAND_ (5).jpg",
   "assets/2019_ISLAND_ (6).jpg",
   "assets/2019_ISLAND_ (7).jpg"
-]
-    
+]  
   },
   "2020": {
-    "Mazy Night": ["assets/2020_mazy.jpeg"],
-    "I promise": ["assets/2020_ipromise.jpeg"]
+    "Mazy Night":[
+  "assets/2020_mazynight_ (1).jpg",
+  "assets/2020_mazynight_ (2).jpg",
+  "assets/2020_mazynight_ (3).jpg",
+  "assets/2020_mazynight_ (4).jpg",
+  "assets/2020_mazynight_ (5).jpg",
+  "assets/2020_mazynight_ (6).jpg"
+],
+    "アルバム「L&」":[
+  "assets/2020_L&_ (1).jpg",
+  "assets/2020_L&_ (2).jpg",
+  "assets/2020_L&_ (3).jpg",
+  "assets/2020_L&_ (4).jpg",
+  "assets/2020_L&_ (5).jpg",
+  "assets/2020_L&_ (6).jpg",
+  "assets/2020_L&_ (7).jpg",
+  "assets/2020_L&_ (8).jpg",
+  "assets/2020_L&_ (9).jpg",
+  "assets/2020_L&_ (10).jpg",
+  "assets/2020_L&_ (11).jpg",
+  "assets/2020_L&_ (12).jpg",
+  "assets/2020_L&_ (13).jpg",
+  "assets/2020_L&_ (14).jpg",
+  "assets/2020_L&_ (15).jpg"
+],
+    "2020 コンサート": [
+  "assets/2020_20con_ (1).jpg",
+  "assets/2020_20con_ (2).jpg",
+  "assets/2020_20con_ (3).jpg",
+  "assets/2020_20con_ (4).jpg",
+  "assets/2020_20con_ (5).jpg"
+],
+    
+    "I promise": [
+  "assets/2020_ipromise_ (1).jpg",
+  "assets/2020_ipromise_ (2).jpg",
+  "assets/2020_ipromise_ (3).jpg",
+  "assets/2020_ipromise_ (4).jpg",
+  "assets/2020_ipromise_ (5).jpg",
+  "assets/2020_ipromise_ (6).jpg",
+  "assets/2020_ipromise_ (7).jpg",
+  "assets/2020_ipromise_ (8).jpg",
+  "assets/2020_ipromise_ (9).jpg",
+  "assets/2020_ipromise_ (10).jpg",
+  "assets/2020_ipromise_ (11).jpg",
+  "assets/2020_ipromise_ (12).jpg",
+  "assets/2020_ipromise_ (13).jpg",
+  "assets/2020_ipromise_ (14).jpg",
+  "assets/2020_ipromise_ (15).jpg",
+  "assets/2020_ipromise_ (16).jpg"
+],
+    "海外オフショット": [ "assets/2020_海外_ (1).jpg",
+    "assets/2020_海外_ (2).jpg",
+    "assets/2020_海外_ (3).jpg",
+    "assets/2020_海外_ (4).jpg"
+   ]
   },
   "2021": {
     "Magic Touch / Beating Hearts": ["assets/2021_magic.jpeg"],
