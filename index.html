@@ -71,14 +71,24 @@
             }
         };
 
-        function render(urls) {
+      function render(urls) {
             gallery.innerHTML = '';
+            if (!urls || urls.length === 0) {
+                gallery.innerHTML = '<p>暂无照片</p>';
+                return;
+            }
+
             urls.forEach(url => {
                 const isSaved = myFavs.includes(url);
                 const card = document.createElement('div');
                 card.className = 'photo-card';
+                
+                // 核心修改：加上 loading="lazy"，这就是懒加载！
                 card.innerHTML = `
-                    <img src="${url}" onclick="openModal('${url}')" onerror="this.src='https://via.placeholder.com/260?text=图片路径有误'">
+                    <img src="${url}" 
+                         loading="lazy" 
+                         onclick="openModal('${url}')" 
+                         onerror="this.src='https://via.placeholder.com/260?text=图片路径有误'">
                     <div class="check-area">
                         <input type="checkbox" ${isSaved ? 'checked' : ''} onchange="toggleSave('${url}', this)"> 加入图鉴
                     </div>`;
