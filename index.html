@@ -60,7 +60,29 @@
         const gallery = document.getElementById('gallery');
         const statusText = document.getElementById('statusText');
 
-        fetch('data.json?t=' + new Date().getTime())
+        // 强制跳过缓存抓取最新数据
+        fetch('data.json?update=' + new Date().getTime())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('找不到 data.json，请检查文件是否存在。');
+                }
+                return res.json();
+            })
+            .then(data => {
+                photoData = data;
+                yearSelect.innerHTML = '<option value="">选择年份</option>';
+                // 自动提取 JSON 里的年份并排序
+                const years = Object.keys(data).sort((a, b) => b - a);
+                years.forEach(year => {
+                    yearSelect.appendChild(new Option(year + "年", year));
+                });
+                statusText.innerText = "✅ 数据加载成功！";
+            })
+            .catch(err => {
+                console.error(err);
+                statusText.innerText = "❌ 数据读取失败：" + err.message;
+                yearSelect.innerHTML = '<option value="">加载失败</option>';
+            });
             .then(res => res.json())
             .then(data => {
                 photoData = data;
