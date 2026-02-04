@@ -22,9 +22,11 @@
         
         /* 仅在分类浏览模式下的未持有状态：灰度 */
         .archive-mode .photo-card.missing { opacity: 0.45; filter: grayscale(1); border: 1px dashed #adb5bd; }
-
-        img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
+        /* 当 missing 类被移除时，自动回复彩色 */
+        .photo-card { opacity: 1; filter: grayscale(0); }
         
+        img { width: 100%; height: auto; border-radius: 8px; cursor: zoom-in; }
+
         .card-footer { margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px; }
         .check-area { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; font-size: 13px; margin-bottom: 8px; }
         
