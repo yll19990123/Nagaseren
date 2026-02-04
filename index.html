@@ -38,24 +38,23 @@
         const gallery = document.getElementById('gallery');
         const statusText = document.getElementById('statusText');
 
-        // 核心：强制刷新并读取
+        // 核心：静默读取数据
         fetch('data.json?t=' + Date.now())
             .then(res => {
-                if (!res.ok) throw new Error('找不到 data.json，请检查文件名！');
+                if (!res.ok) throw new Error('Data not found');
                 return res.json();
             })
             .then(data => {
                 photoData = data;
-                statusText.style.color = "green";
-                statusText.innerText = "✅ 年份加载成功";
+                // 数据成功后直接填充年份，不再在页面显示文字
                 yearSelect.innerHTML = '<option value="">选择年份</option>';
                 Object.keys(data).sort((a, b) => b - a).forEach(year => {
                     yearSelect.appendChild(new Option(year + "年", year));
                 });
             })
             .catch(err => {
-                statusText.innerText = "❌ 错误：" + err.message;
-                console.error(err);
+                // 只有出错时才在浏览器后台报错，不影响用户看到的界面
+                console.error("加载失败:", err);
             });
 
         yearSelect.onchange = function() {
