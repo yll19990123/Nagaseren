@@ -1,9 +1,24 @@
 {
   "2018": {
-    "Cinderella Girl": [
-      "assets/2018_cinderella_01.jpeg",
-      "assets/2018_cinderella_02.jpeg",
-      "assets/2018_cinderella_03.jpeg"
+     "デビュー会見": [
+      "assets/2018_出道会见_01.jpeg",
+      "assets/2018_出道会见_02.jpeg",
+      "assets/2018_出道会见_03.jpeg"
+    ],
+     "CDリリースイベント": [
+      "assets/2018_CDリリースイベント_01.jpeg",
+      "assets/2018_CDリリースイベント_02.jpeg",
+      "assets/2018_CDリリースイベント_03.jpeg"
+    ],
+    "シンデレラガール": [
+      "assets/2018_シンデレラガール_01.jpeg",
+      "assets/2018_シンデレラガール_02.jpeg",
+      "assets/2018_シンデレラガール_03.jpeg"
+    ],
+     "18夏コンサート": [
+      "assets/2018_18con_01.jpeg",
+      "assets/2018_シンデレラガール_02.jpeg",
+      "assets/2018_シンデレラガール_03.jpeg"
     ],
     "Memorial": [
       "assets/2018_memorial_01.jpeg",
