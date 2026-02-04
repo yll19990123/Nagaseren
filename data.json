@@ -188,8 +188,60 @@
    ]
   },
   "2021": {
-    "Magic Touch / Beating Hearts": ["assets/2021_magic.jpeg"],
-    "恋降る月夜に君想ふ": ["assets/2021_koifuru.jpeg"]
+    "～L&～特典映像": [ "assets/2021_特典_ (1).jpg",
+      "assets/2021_特典_ (2).jpg",
+      "assets/2021_特典_ (3).jpg",
+      "assets/2021_特典_ (4).jpg"
+    ],
+    "「ポートレートシリーズ」":["assets/2021_肖像_ (1).jpg",
+      "assets/2021_肖像_ (2).jpg",
+      "assets/2021_肖像_ (3).jpg",
+      "assets/2021_肖像_ (4).jpg",
+      "assets/2021_肖像_ (5).jpg"
+    ],
+    "Magic Touch / Beating Hearts": [
+  "assets/2021_magictouch_ (1).jpg",
+  "assets/2021_magictouch_ (2).jpg",
+  "assets/2021_magictouch_ (3).jpg",
+  "assets/2021_magictouch_ (4).jpg",
+  "assets/2021_magictouch_ (5).jpg",
+  "assets/2021_magictouch_ (6).jpg",
+  "assets/2021_magictouch_ (7).jpg",
+  "assets/2021_magictouch_ (8).jpg",
+  "assets/2021_magictouch_ (9).jpg",
+  "assets/2021_magictouch_ (10).jpg",
+  "assets/2021_magictouch_ (11).jpg",
+  "assets/2021_magictouch_ (12).jpg",
+  "assets/2021_magictouch_ (13).jpg"
+],
+    "アルバム「Re：Sense」":[
+  "assets/2021_resense_ (1).jpg",
+  "assets/2021_resense_ (2).jpg",
+  "assets/2021_resense_ (3).jpg",
+  "assets/2021_resense_ (4).jpg",
+  "assets/2021_resense_ (5).jpg",
+  "assets/2021_resense_ (6).jpg",
+  "assets/2021_resense_ (7).jpg",
+  "assets/2021_resense_ (8).jpg",
+  "assets/2021_resense_ (9).jpg",
+  "assets/2021_resense_ (10).jpg"
+],
+    "2021 コンサート": [ "assets/2021_21con_ (1).jpg",
+      "assets/2021_21con_ (2).jpg",
+      "assets/2021_21con_ (3).jpg",
+      "assets/2021_21con_ (4).jpg",
+      "assets/2021_21con_ (5).jpg",
+      "assets/2021_21con_ (6).jpg"
+    ],
+    "恋降る月夜に君想ふ":  [
+  "assets/2021_恋降_ (1).jpg",
+  "assets/2021_恋降_ (2).jpg",
+  "assets/2021_恋降_ (3).jpg",
+  "assets/2021_恋降_ (4).jpg",
+  "assets/2021_恋降_ (5).jpg",
+  "assets/2021_恋降_ (6).jpg",
+  "assets/2021_恋降_ (7).jpg"
+    ]
   },
   "2022": {
     "Lovin' you / 踊るように人生を。": ["assets/2022_lovinyou.jpeg"],
