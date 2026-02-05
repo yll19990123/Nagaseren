@@ -6,11 +6,11 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        /* 导出模式下，隐藏所有按钮、复选框和输入框的边框 */
-  .exporting button, 
-  .exporting .check-area,
-  .exporting input[type="checkbox"] { 
-    display: none !important; 
+  /* 当处于导出状态时，隐藏掉勾选框、收藏按钮等杂物 */
+.exporting .checkbox-container,
+.exporting button,
+.exporting .filter-buttons {
+    display: none !important;
 }
 .exporting .note-input { 
     border: none !important; 
@@ -295,11 +295,29 @@
 function exportToImage() {
     const btn = document.querySelector('button[onclick="exportToImage()"]');
     const originalText = btn.innerText;
-    btn.innerText = "📸 正在压缩生成..."; // 修改提示语，显得更专业
+    btn.innerText = "📸 正在生成导出图...";
     btn.disabled = true;
 
+    // 1. 获取当前模式（已拥有/想要）
+    const currentModeText = document.getElementById('modeTitle').innerText;
+
+    // 2. 创建一个临时的顶部标题元素
+    const exportHeader = document.createElement('div');
+    exportHeader.id = "temp-export-header";
+    exportHeader.innerHTML = `
+        <h1 style="font-size: 28px; margin-bottom: 10px; color: #000;">Ren Nagase Photo Archive</h1>
+        <p style="font-size: 18px; color: #666; font-weight: bold;">状态：${currentModeText}</p>
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+    `;
+    exportHeader.style.textAlign = "center";
+    exportHeader.style.padding = "20px";
+    exportHeader.style.backgroundColor = "#fff";
+
+    // 3. 将标题插入到 gallery 的最前面
+    gallery.prepend(exportHeader);
     gallery.classList.add('exporting');
 
+    // 4. 确保图片加载后开始截图
     const images = gallery.getElementsByTagName('img');
     const promises = Array.from(images).map(img => {
         if (img.complete) return Promise.resolve();
@@ -309,21 +327,17 @@ function exportToImage() {
     Promise.all(promises).then(() => {
         html2canvas(gallery, {
             useCORS: true,
-            backgroundColor: "#ffffff", // 建议改为白色，JPG不支持透明
-            scale: 1.5,                 // 【优化 1】从 3 降到 1.5，清晰度足够但体积大幅减小
+            backgroundColor: "#ffffff",
+            scale: 2, // 保持清晰度
             logging: false
         }).then(canvas => {
             const link = document.createElement('a');
-            const fileName = document.getElementById('modeTitle').innerText;
-            
-            // 【优化 2】后缀名改为 .jpg
-            link.download = `Ren_Nagase_${fileName}_${new Date().toISOString().slice(0,10)}.jpg`;
-            
-            // 【优化 3】改为 image/jpeg 格式，并设置 0.7 的压缩质量
-            link.href = canvas.toDataURL("image/jpeg", 0.7);
-            
+            link.download = `Ren_Nagase_${currentModeText}_${new Date().toISOString().slice(0,10)}.jpg`;
+            link.href = canvas.toDataURL("image/jpeg", 0.8); // 导出为压缩后的 JPG
             link.click();
-            
+
+            // 5. 恢复：移除临时标题和导出样式
+            exportHeader.remove();
             gallery.classList.remove('exporting');
             btn.innerText = originalText;
             btn.disabled = false;
